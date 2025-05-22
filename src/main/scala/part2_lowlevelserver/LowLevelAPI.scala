@@ -18,18 +18,18 @@ object LowLevelAPI extends App {
   // implicit val materializer = ActorMaterializer() // needed only with Akka Streams < 2.6
   import system.dispatcher
 
-  val serverSource = Http().bind("localhost", 8000)
-  val connectionSink = Sink.foreach[IncomingConnection] { connection =>
-    println(s"Accepted incoming connection from: ${connection.remoteAddress}")
-  }
-
-  val serverBindingFuture = serverSource.to(connectionSink).run()
-  serverBindingFuture.onComplete {
-    case Success(binding) =>
-      println("Server binding successful.")
-      binding.terminate(2.seconds)
-    case Failure(ex) => println(s"Server binding failed: $ex")
-  }
+//  val serverSource = Http().newServerAt("localhost", 8000).connectionSource()
+//  val connectionSink = Sink.foreach[IncomingConnection] { connection =>
+//    println(s"Accepted incoming connection from: ${connection.remoteAddress}")
+//  }
+//
+//  val serverBindingFuture = serverSource.to(connectionSink).run()
+//  serverBindingFuture.onComplete {
+//    case Success(binding) =>
+//      println("Server binding successful.")
+//      binding.terminate(2.seconds)
+//    case Failure(ex) => println(s"Server binding failed: $ex")
+//  }
 
   /*
     Method 1: synchronously serve HTTP responses
@@ -67,14 +67,19 @@ object LowLevelAPI extends App {
       )
   }
 
-  val httpSyncConnectionHandler = Sink.foreach[IncomingConnection] { connection =>
-    connection.handleWithSyncHandler(requestHandler)
-  }
-
-  //  Http().bind("localhost", 8080).runWith(httpSyncConnectionHandler)
+//  val httpSyncConnectionHandler = Sink.foreach[IncomingConnection] { connection =>
+//    connection.handleWithSyncHandler(requestHandler)
+//  }
+//
+//  Http()
+//    .newServerAt("localhost", 8080)
+//    .connectionSource()
+//    .runWith(httpSyncConnectionHandler)
 
   // shorthand version:
-  // Http().bindAndHandleSync(requestHandler, "localhost", 8080)
+//  Http()
+//    .newServerAt("localhost", 8080)
+//    .bindSync(requestHandler)
 
 
   /*
@@ -118,10 +123,13 @@ object LowLevelAPI extends App {
   }
 
   // streams-based "manual" version
-  //  Http().bind("localhost", 8081).runWith(httpAsyncConnectionHandler)
+//  Http()
+//    .newServerAt("localhost", 8081)
+//    .connectionSource()
+//    .runWith(httpAsyncConnectionHandler)
 
   // shorthand version
-  Http().bindAndHandleAsync(asyncRequestHandler, "localhost", 8081)
+  // Http().bindAndHandleAsync(asyncRequestHandler, "localhost", 8081)
 
   /*
     Method 3: async via Akka streams
@@ -160,12 +168,16 @@ object LowLevelAPI extends App {
   }
 
   // "manual" version
-  //  Http().bind("localhost", 8082).runForeach { connection =>
-  //    connection.handleWith(streamsBasedRequestHandler)
-  //  }
+//  Http().newServerAt("localhost", 8082)
+//    .connectionSource()
+//    .runForeach { connection =>
+//      connection.handleWith(streamsBasedRequestHandler)
+//    }
 
   // shorthand version
-  Http().bindAndHandle(streamsBasedRequestHandler, "localhost", 8082)
+//  Http()
+//    .newServerAt("localhost", 8082)
+//    .bindFlow(streamsBasedRequestHandler)
 
   /**
     * Exercise: create your own HTTP server running on localhost on 8388, which replies
@@ -219,7 +231,9 @@ object LowLevelAPI extends App {
       )
   }
 
-  val bindingFuture = Http().bindAndHandleSync(syncExerciseHandler, "localhost", 8388)
+  val bindingFuture = Http()
+    .newServerAt("localhost", 8388)
+    .bindSync(syncExerciseHandler)
 
   // shutdown the server:
   bindingFuture

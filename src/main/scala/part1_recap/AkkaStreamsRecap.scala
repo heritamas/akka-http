@@ -29,8 +29,9 @@ object AkkaStreamsRecap extends App {
 //    case Failure(ex) => println(s"Summing all the numbers from the simple source FAILED: $ex")
 //  }
 
-  val anotherMaterializedValue = source.viaMat(flow)(Keep.right).toMat(sink)(Keep.left)
-    // .run()
+  val anotherMaterializedValue = source.viaMat(flow)(Keep.right).toMat(sink)(Keep.right)
+     // .run()
+
   /*
     1 - materializing a graph means materializing ALL the components
     2 - a materialized value can be ANYTHING AT ALL
@@ -46,13 +47,13 @@ object AkkaStreamsRecap extends App {
 
   val bufferedFlow = Flow[Int].buffer(10, OverflowStrategy.dropHead)
 
-  source.async
-    .via(bufferedFlow).async
-    .runForeach { e =>
-      // a slow consumer
-      Thread.sleep(100)
-      println(e)
-    }
+//  source.async
+//    .via(bufferedFlow).async
+//    .runForeach { e =>
+//      // a slow consumer
+//      Thread.sleep(100)
+//      println(e)
+//    }
 
 
 }
