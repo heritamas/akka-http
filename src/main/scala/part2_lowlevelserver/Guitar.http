@@ -1,0 +1,25 @@
+GET {{server}}/api/guitar?id=2
+Accept: application/json
+
+###
+
+GET {{secure}}/api/guitar
+Accept: application/json
+
+###
+POST {{server}}/api/guitar
+Content-Type: application/json
+
+{
+  "make": "Fender",
+  "model": "Whatever",
+  "quantity": 3
+}
+
+###
+GET {{server}}/api/guitar/inventory?inStock=false
+Accept: application/json
+
+###
+
+

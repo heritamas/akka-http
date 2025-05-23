@@ -30,7 +30,7 @@ object HttpsContext {
   sslContext.init(keyManagerFactory.getKeyManagers, trustManagerFactory.getTrustManagers, new SecureRandom)
 
   // Step 5: return the https connection context
-  val httpsConnectionContext: HttpsConnectionContext = ConnectionContext.https(sslContext)
+  val httpsConnectionContext: HttpsConnectionContext = ConnectionContext.httpsServer(sslContext)
 }
 
 object LowLevelHttps extends App {
@@ -71,6 +71,9 @@ object LowLevelHttps extends App {
       )
   }
 
-  val httpsBinding = Http().bindAndHandleSync(requestHandler, "localhost", 8443, HttpsContext.httpsConnectionContext)
+  val httpsBinding = Http()
+    .newServerAt("localhost", 8443)
+    .enableHttps(HttpsContext.httpsConnectionContext)
+    .bindSync(requestHandler)
 
 }

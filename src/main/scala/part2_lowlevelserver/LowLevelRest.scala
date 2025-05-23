@@ -87,19 +87,19 @@ object LowLevelRest extends App with GuitarStoreJsonProtocol {
    */
 
   // JSON -> marshalling
-  val simpleGuitar = Guitar("Fender", "Stratocaster")
-  println(simpleGuitar.toJson.prettyPrint)
-
-  // unmarshalling
-  val simpleGuitarJsonString =
-    """
-      |{
-      |  "make": "Fender",
-      |  "model": "Stratocaster",
-      |  "quantity": 3
-      |}
-    """.stripMargin
-  println(simpleGuitarJsonString.parseJson.convertTo[Guitar])
+//  val simpleGuitar = Guitar("Fender", "Stratocaster")
+//  println(simpleGuitar.toJson.prettyPrint)
+//
+//  // unmarshalling
+//  val simpleGuitarJsonString =
+//    """
+//      |{
+//      |  "make": "Fender",
+//      |  "model": "Stratocaster",
+//      |  "quantity": 3
+//      |}
+//    """.stripMargin
+//  println(simpleGuitarJsonString.parseJson.convertTo[Guitar])
 
   /*
     setup
@@ -216,7 +216,7 @@ object LowLevelRest extends App with GuitarStoreJsonProtocol {
       }
   }
 
-  Http().bindAndHandleAsync(requestHandler, "localhost", 8080)
+  Http().newServerAt("localhost", 8080).bind(requestHandler)
 
   /**
     * Exercise: enhance the Guitar case class with a quantity field, by default 0
