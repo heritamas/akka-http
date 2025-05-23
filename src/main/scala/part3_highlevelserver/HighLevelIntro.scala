@@ -55,7 +55,9 @@ object HighLevelIntro extends App {
     } // Routing tree
 
 
-  Http().bindAndHandle(pathGetRoute, "localhost", 8080)
+  Http()
+    .newServerAt("localhost", 8080)
+    .bind(chainedRoute)
 
 
 }

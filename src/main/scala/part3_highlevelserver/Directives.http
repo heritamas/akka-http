@@ -1,0 +1,16 @@
+### GET request to example server
+GET {{server}}/home
+
+###
+
+GET {{server}}/myEndpoint
+
+###
+
+POST {{server}}/myEndpoint
+
+###
+
+GET {{server}}/home
+
+###
