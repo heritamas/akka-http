@@ -3,7 +3,7 @@ GET {{server}}/home
 
 ###
 
-GET {{server}}/myEndpoint
+GET {{server}}/controlEndpoint
 
 ###
 
@@ -13,4 +13,18 @@ POST {{server}}/myEndpoint
 
 GET {{server}}/home
 
+###
+
+GET {{server}}/api/item/42
+Accept: application/json
+
+###
+
+POST {{server}}/api/myEndpoint
+Accept: application/json
+
+{
+  "name": "John Doe",
+  "age": 30
+}
 ###

@@ -53,7 +53,7 @@ object DirectivesBreakdown extends App {
       complete(StatusCodes.OK)
     }
 
-  //  Http().bindAndHandle(complexPathRoute, "localhost", 8080)
+  //Http().newServerAt("localhost", 8080).bind(complexPathRoute)
 
 
   /**
@@ -77,7 +77,7 @@ object DirectivesBreakdown extends App {
   val queryParamExtractionRoute =
     // /api/item?id=45
     path("api" / "item") {
-      parameter('id.as[Int]) { (itemId: Int) =>
+      parameter(Symbol("id").as[Int]) { (itemId: Int) =>
         println(s"I've extracted the ID as $itemId")
         complete(StatusCodes.OK)
       }
@@ -93,7 +93,7 @@ object DirectivesBreakdown extends App {
       }
     }
 
-  Http().bindAndHandle(queryParamExtractionRoute, "localhost", 8080)
+  //Http().newServerAt("localhost", 8080).bind(extractRequestRoute)
 
   /**
     * Type #3: composite directives
@@ -139,13 +139,13 @@ object DirectivesBreakdown extends App {
     }
 
   val blogByQueryParamRoute =
-    parameter('postId.as[Int]) { (blogpostId: Int) =>
+    parameter(Symbol("postId").as[Int]) { (blogpostId: Int) =>
       // the SAME server logic
       complete(StatusCodes.OK)
     }
 
   val combinedBlodByIdRoute =
-    (path(IntNumber) | parameter('postId.as[Int])) { (blogpostId: Int) =>
+    (path(IntNumber) | parameter(Symbol("postId").as[Int])) { (blogpostId: Int) =>
       // your original server logic
       complete(StatusCodes.OK)
     }
@@ -162,9 +162,9 @@ object DirectivesBreakdown extends App {
     }
 
   val routeWithRejection =
-//    path("home") {
-//      reject
-//    } ~
+    path("home") {
+      reject
+    } ~
     path("index") {
       completeOkRoute
     }
@@ -182,5 +182,5 @@ object DirectivesBreakdown extends App {
       }
     }
 
-  Http().bindAndHandle(getOrPutPath, "localhost", 8081)
+  Http().newServerAt("localhost", 8080).bind(getOrPutPath)
 }
