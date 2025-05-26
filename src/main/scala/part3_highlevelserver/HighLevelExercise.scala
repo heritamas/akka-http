@@ -44,7 +44,7 @@ object HighLevelExercise extends App with PersonJsonProtocol {
   val personServerRoute =
     pathPrefix("api" / "people") {
       get {
-        (path(IntNumber) | parameter('pin.as[Int])) { pin =>
+        (path(IntNumber) | parameter("pin".as[Int])) { pin =>
           complete(
             HttpEntity(
               ContentTypes.`application/json`,
@@ -92,6 +92,8 @@ object HighLevelExercise extends App with PersonJsonProtocol {
       }
     }
 
-  Http().bindAndHandle(personServerRoute, "localhost", 8080)
+  Http()
+    .newServerAt("localhost", 8080)
+    .bind(personServerRoute)
 
 }

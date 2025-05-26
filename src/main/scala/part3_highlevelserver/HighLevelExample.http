@@ -1,0 +1,11 @@
+### Get all guitars
+GET {{server}}/api/guitar
+
+### Get guitar by id (query param)
+GET {{server}}/api/guitar?id=1
+
+### Get guitar by id (path param)
+GET {{server}}/api/guitar/1
+
+### Get guitars in stock
+GET {{server}}/api/guitar/inventory?inStock=true
