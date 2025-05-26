@@ -100,7 +100,7 @@ object MarshallingJSON extends App
           complete(playersByClassFuture)
 
         } ~
-          (path(Segment) | parameter('nickname)) { nickname =>
+          (path(Segment) | parameter("nickname")) { nickname =>
             val playerOptionFuture = (rtjvmGameMap ? GetPlayer(nickname)).mapTo[Option[Player]]
             complete(playerOptionFuture)
           } ~
@@ -108,6 +108,12 @@ object MarshallingJSON extends App
             complete((rtjvmGameMap ? GetAllPlayers).mapTo[List[Player]])
           }
       } ~
+        post {
+          entity(as[JsValue]) { playerjsvalue =>
+            val player = playerjsvalue.convertTo[Player]
+            complete((rtjvmGameMap ? AddPlayer(player)).map(_ => StatusCodes.OK))
+          }
+        } ~
         post {
           entity(implicitly[FromRequestUnmarshaller[Player]]) { player =>
             complete((rtjvmGameMap ? AddPlayer(player)).map(_ => StatusCodes.OK))
@@ -120,6 +126,7 @@ object MarshallingJSON extends App
         }
     }
 
-  Http().bindAndHandle(rtjvmGameRouteSkel, "localhost", 8080)
-
+  Http()
+    .newServerAt("localhost", 8080)
+    .bind(rtjvmGameRouteSkel)
 }

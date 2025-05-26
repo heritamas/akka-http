@@ -1,0 +1,31 @@
+### Get all players
+GET {{server}}/api/player
+
+### Get player by nickname (path)
+GET {{server}}/api/player/martin_killz_u
+
+### Get player by nickname (query param)
+GET {{server}}/api/player?nickname=martin_killz_u
+
+### Get players by class
+GET {{server}}/api/player/class/Warrior
+
+### Add a player
+POST {{server}}/api/player
+Content-Type: application/json
+
+{
+  "nickname": "ThousandDeaths",
+  "characterClass": "Rogue",
+  "level": 10
+}
+
+### Remove a player
+DELETE {{server}}/api/player
+Content-Type: application/json
+
+{
+  "nickname": "ThousandDeaths",
+  "characterClass": "Rogue",
+  "level": 10
+}
