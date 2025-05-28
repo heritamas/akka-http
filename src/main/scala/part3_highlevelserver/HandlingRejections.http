@@ -1,0 +1,9 @@
+### GET request to example server
+GET {{server}}/api/myEndpoint
+
+###
+
+GET {{server}}/api/myEndpoint?id=99
+Accept: application/json
+
+###

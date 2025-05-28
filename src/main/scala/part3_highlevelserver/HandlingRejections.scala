@@ -5,7 +5,7 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.StatusCodes
 import akka.stream.ActorMaterializer
 import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.server.{MethodRejection, MissingQueryParamRejection, Rejection, RejectionHandler}
+import akka.http.scaladsl.server.{MethodRejection, MissingQueryParamRejection, Rejection, RejectionHandler, Route}
 
 object HandlingRejections extends App {
 
@@ -19,7 +19,7 @@ object HandlingRejections extends App {
       get {
         complete(StatusCodes.OK)
       } ~
-      parameter('id) { _ =>
+      parameter("id") { _ =>
         complete(StatusCodes.OK)
       }
     }
@@ -44,7 +44,7 @@ object HandlingRejections extends App {
         } ~
         post {
           handleRejections(forbiddenHandler) { // handle rejections WITHIN
-            parameter('myParam) { _ =>
+            parameter("myParam") { _ =>
               complete(StatusCodes.OK)
             }
           }
@@ -55,7 +55,7 @@ object HandlingRejections extends App {
 //  Http().bindAndHandle(simpleRouteWithHandlers, "localhost", 8080)
 
   // list(method rejection, query param rejection)
-  implicit val customRejectionHandler = RejectionHandler.newBuilder()
+  implicit val customRejectionHandler: RejectionHandler = RejectionHandler.newBuilder()
     .handle {
       case m: MissingQueryParamRejection =>
         println(s"I got a query param rejection: $m")
@@ -70,6 +70,8 @@ object HandlingRejections extends App {
 
   // sealing a route
 
-  Http().bindAndHandle(simpleRoute, "localhost", 8080)
+  Http()
+    .newServerAt("localhost", 8080)
+    .bind(Route.seal(simpleRoute))
 
 }
