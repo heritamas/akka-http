@@ -63,21 +63,6 @@ object WebsocketsDemo extends App {
       TextMessage(Source.single("Server received a binary message..."))
   }
 
-  val websocketRoute =
-    (pathEndOrSingleSlash & get) {
-      complete(
-        HttpEntity(
-          ContentTypes.`text/html(UTF-8)`,
-          html
-        )
-      )
-    } ~
-    path("greeter") {
-      handleWebSocketMessages(socialFlow)
-    }
-
-  Http().bindAndHandle(websocketRoute, "localhost", 8080)
-
 
   case class SocialPost(owner: String, content: String)
 
@@ -97,6 +82,24 @@ object WebsocketsDemo extends App {
     Sink.foreach[Message](println),
     socialMessages
   )
+
+  val websocketRoute =
+    (pathEndOrSingleSlash & get) {
+      complete(
+        HttpEntity(
+          ContentTypes.`text/html(UTF-8)`,
+          html
+        )
+      )
+    } ~
+      path("greeter") {
+        handleWebSocketMessages(socialFlow)
+      }
+
+  Http()
+    .newServerAt("localhost", 8080)
+    .bind(websocketRoute)
+
 
 
 }

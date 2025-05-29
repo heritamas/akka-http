@@ -40,6 +40,13 @@ class RouteDSLSpec extends AnyWordSpecLike with ScalatestRouteTest with BookJson
       }
     }
 
+    "return a book by calling the endpoint with the id in the path (high level)" in {
+      Get("/api/book/2") ~> libraryRoute ~> check {
+        responseAs[Option[Book]] shouldBe Some(Book(2, "JRR Tolkien", "The Lord of the Rings"))
+      }
+    }
+
+
     "return a book by calling the endpoint with the id in the path" in {
       Get("/api/book/2") ~> libraryRoute ~> check {
         response.status shouldBe StatusCodes.OK
@@ -110,7 +117,7 @@ object RouteDSLSpec extends BookJsonProtocol with SprayJsonSupport {
         complete(books.filter(_.author == author))
       } ~
       get {
-        (path(IntNumber) | parameter('id.as[Int])) { id =>
+        (path(IntNumber) | parameter("id".as[Int])) { id =>
           complete(books.find(_.id == id))
         } ~
         pathEndOrSingleSlash {
