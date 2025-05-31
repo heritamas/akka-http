@@ -61,6 +61,12 @@ object UploadingFiles extends App {
             // writing the data to the file
             val mat = fileContentsSource.runWith(fileContentsSink)
             // treat the Future[IOResult] here
+            mat.onComplete {
+              case Success(ioResult) =>
+                log.info(s"File written successfully: $filename, bytes written: ${ioResult.count}")
+              case Failure(ex) =>
+                log.error(s"Failed to write file: $filename, error: $ex")
+            }
           }
         }
 
@@ -72,7 +78,9 @@ object UploadingFiles extends App {
       }
     }
 
-  Http().bindAndHandle(filesRoute, "localhost", 8080)
+  Http()
+    .newServerAt("localhost", 8080)
+    .bind(filesRoute)
 
-  def jeg = ???
+  //def jeg = ???
 }

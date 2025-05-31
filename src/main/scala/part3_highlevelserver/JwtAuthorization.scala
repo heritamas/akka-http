@@ -86,5 +86,7 @@ object JwtAuthorization extends App with SprayJsonSupport {
 
   val route = loginRoute ~ authenticatedRoute
 
-  Http().bindAndHandle(route, "localhost", 8080)
+  Http()
+    .newServerAt("localhost", 8080)
+    .bind(route)
 }
