@@ -1,12 +1,11 @@
 package part4_client
 
 import java.util.UUID
-
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.stream.ActorMaterializer
-import akka.stream.scaladsl.{Sink, Source}
+import akka.stream.scaladsl.{Keep, Sink, Source}
 
 import scala.util.{Failure, Success, Try}
 import spray.json._
@@ -55,9 +54,9 @@ object HostLevel extends App with PaymentJsonProtocol {
     )
   )
 
-  Source(serverHttpRequests)
-    .via(Http().cachedHostConnectionPool[String]("localhost", 8080))
-    .runForeach { // (Try[HttpResponse], String)
+  val mat = Source(serverHttpRequests)
+    .viaMat(Http().cachedHostConnectionPool[String]("localhost", 8080))(Keep.right)
+    .toMat(Sink.foreach { // (Try[HttpResponse], String)
       case (Success(response@HttpResponse(StatusCodes.Forbidden, _, _, _)), orderId) =>
         println(s"The order ID $orderId was not allowed to proceed: $response")
       case (Success(response), orderId) =>
@@ -65,7 +64,9 @@ object HostLevel extends App with PaymentJsonProtocol {
         // do something with the order ID: dispatch it, send a notification to the customer, etc
       case (Failure(ex), orderId) =>
         println(s"The order ID $orderId could not be completed: $ex")
-    }
+    })(Keep.left)
+    .run()
 
+  println(s"Materialized value: $mat")
   // high-volume, low-latency requests
 }

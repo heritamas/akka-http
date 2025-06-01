@@ -9,6 +9,9 @@ import akka.stream.scaladsl.Source
 import scala.util.{Failure, Success}
 import spray.json._
 
+import scala.concurrent.duration.DurationInt
+import scala.language.postfixOps
+
 object RequestLevel extends App with PaymentJsonProtocol {
 
   implicit val system: ActorSystem = ActorSystem("RequestLevelAPI")
@@ -47,6 +50,7 @@ object RequestLevel extends App with PaymentJsonProtocol {
   )
 
   Source(serverHttpRequests)
+    .throttle(1, 1 second) // 1 request per second
     .mapAsyncUnordered(10)(request => Http().singleRequest(request))
     .runForeach(println)
 

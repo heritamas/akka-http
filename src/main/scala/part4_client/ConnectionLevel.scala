@@ -22,10 +22,10 @@ object ConnectionLevel extends App with PaymentJsonProtocol {
   def oneOffRequest(request: HttpRequest) =
     Source.single(request).via(connectionFlow).runWith(Sink.head)
 
-  oneOffRequest(HttpRequest()).onComplete {
-    case Success(response) => println(s"Got successful response: $response")
-    case Failure(ex) => println(s"Sending the request failed: $ex")
-  }
+//  oneOffRequest(HttpRequest()).onComplete {
+//    case Success(response) => println(s"Got successful response: $response")
+//    case Failure(ex) => println(s"Sending the request failed: $ex")
+//  }
 
   /*
     A small payments system

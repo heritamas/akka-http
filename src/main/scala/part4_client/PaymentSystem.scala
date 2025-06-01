@@ -63,6 +63,8 @@ object PaymentSystem extends App with PaymentJsonProtocol with SprayJsonSupport 
       }
     }
 
-  Http().bindAndHandle(paymentRoute, "localhost", 8080)
+  Http()
+    .newServerAt("localhost", 8080)
+    .bind(paymentRoute)
 
 }
