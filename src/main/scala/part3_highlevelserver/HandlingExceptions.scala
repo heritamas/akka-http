@@ -5,7 +5,7 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.StatusCodes
 import akka.stream.ActorMaterializer
 import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.server.ExceptionHandler
+import akka.http.scaladsl.server.{ExceptionHandler, Route}
 
 object HandlingExceptions extends App {
 
@@ -20,7 +20,7 @@ object HandlingExceptions extends App {
         throw new RuntimeException("Getting all the people took too long")
       } ~
       post {
-        parameter('id) { id =>
+        parameter("id") { id =>
           if (id.length > 2)
             throw new NoSuchElementException(s"Parameter $id cannot be found in the database, TABLE FLIP!")
 
@@ -37,15 +37,20 @@ object HandlingExceptions extends App {
   }
 
 
-//  Http().bindAndHandle(simpleRoute, "localhost", 8080)
+//  Http()
+//    .newServerAt("localhost", 8080)
+//    .bind(Route.seal(simpleRoute))
+
 
   val runtimeExceptionHandler: ExceptionHandler = ExceptionHandler {
     case e: RuntimeException =>
+      println("RuntimeException handled")
       complete(StatusCodes.NotFound, e.getMessage)
   }
 
   val noSuchElementExceptionHandler: ExceptionHandler = ExceptionHandler {
     case e: NoSuchElementException =>
+      println("NoSuchElementException handled")
       complete(StatusCodes.BadRequest, e.getMessage)
   }
 
@@ -58,7 +63,7 @@ object HandlingExceptions extends App {
         } ~
         handleExceptions(noSuchElementExceptionHandler) {
           post {
-            parameter('id) { id =>
+            parameter("id") { id =>
               if (id.length > 2)
                 throw new NoSuchElementException(s"Parameter $id cannot be found in the database, TABLE FLIP!")
 
@@ -69,7 +74,9 @@ object HandlingExceptions extends App {
       }
     }
 
-  Http().bindAndHandle(delicateHandleRoute, "localhost", 8080)
+  Http()
+    .newServerAt("localhost", 8080)
+    .bind(Route.seal(delicateHandleRoute))
 
 
 }
